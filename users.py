@@ -88,7 +88,7 @@ class UserForm:
             cur.execute(userInsert, userRec)
             conn.commit()
 
-            a = 'BMI MEANING'
+            a = 0
             if (bmiInt < 18.5):
                 a = 'Underweight'
             elif (bmiInt >= 18.5) and (bmiInt <= 24.9):

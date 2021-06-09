@@ -3,7 +3,7 @@ from users import *
 from exercise import *
 
 
-class HealthForm:
+class ActivityForm:
     def __init__(self):
 
         sg.theme('TanBlue')
@@ -54,6 +54,7 @@ class HealthForm:
                       auto_size_columns=True)],
             [sg.Text('', size=(20, 1)), sg.Button(button_text='Add', key='ADD', size=(8, 1)),
              sg.Button(button_text='Close', key='DONE', size=(8, 1)),
+             sg.Button(button_text='Get Data', key='GET_DATA', size=(8, 1)),
              ]
         ]
 
@@ -109,6 +110,9 @@ class HealthForm:
                 ExerciseForm()
             elif event == 'EDIT_USER':
                 UserForm()
+            elif event == 'GET_DATA':
+                self.users_populate()
+                self.exercises_populate()
             elif event == 'DONE':
                 break
             else:
@@ -209,7 +213,7 @@ class HealthForm:
                                     port=PORT)
             cur = conn.cursor()
 
-            select_user_exercises = 'SELECT * FROM "Health" WHERE user_id = %s ORDER BY id'
+            select_user_exercises = 'SELECT * FROM "Activity" WHERE user_id = %s ORDER BY id'
             cur.execute(select_user_exercises, (idSelected,))
             self.hRows = cur.fetchall()
             for row in self.hRows:
@@ -242,7 +246,7 @@ class HealthForm:
             exercise_id = idexSelected
             rep = rpSelected
             exercise_date = values["input"]
-            health_insert = 'INSERT INTO "Health" (user_id, exercise_id, rep, exercise_date) VALUES(%s, %s, %s, %s)'
+            health_insert = 'INSERT INTO "Activity" (user_id, exercise_id, rep, exercise_date) VALUES(%s, %s, %s, %s)'
             health_rec = (user_id, exercise_id, rep, exercise_date)
             cur.execute(health_insert, health_rec)
             conn.commit()
@@ -250,7 +254,7 @@ class HealthForm:
             self.table_populate()
 
         except (Exception, psycopg2.DatabaseError) as error:
-            sg.Popup("Add Health report", str(error))
+            sg.Popup("Add Activity report", str(error))
 
         finally:
             if conn is not None:
@@ -275,7 +279,7 @@ class HealthForm:
                                     port=PORT)
             cur = conn.cursor()
 
-            health_update = 'UPDATE "Health" SET rep=%s, exercise_date=%s WHERE id=%s'
+            health_update = 'UPDATE "Activity" SET rep=%s, exercise_date=%s WHERE id=%s'
             cur.execute(health_update, (rowValues[3], rowValues[4], rowValues[0]))
             conn.commit()
 
@@ -297,7 +301,7 @@ class HealthForm:
                                     port=PORT)
             cur = conn.cursor()
 
-            health_delete = 'DELETE FROM "Health" WHERE id=%s'
+            health_delete = 'DELETE FROM "Activity" WHERE id=%s'
             cur.execute(health_delete, (rowValues[0],))
             conn.commit()
 
@@ -305,7 +309,7 @@ class HealthForm:
             self.window.Element('TABLE').Update(values=data)
 
         except (Exception, psycopg2.DatabaseError) as error:
-            sg.Popup("Delete Health report", str(error))
+            sg.Popup("Delete Activity report", str(error))
 
         finally:
             if conn is not None:
@@ -314,4 +318,4 @@ class HealthForm:
 
 
 if __name__ == '__main__':
-    HealthForm()
+    ActivityForm()
